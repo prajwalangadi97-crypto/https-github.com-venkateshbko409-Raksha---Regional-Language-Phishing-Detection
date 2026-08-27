@@ -1,0 +1,17 @@
+# ── FastAPI Server ──
+fastapi==0.115.12
+uvicorn[standard]==0.34.2
+python-multipart==0.0.20
+pydantic==2.11.7
+
+# ── Machine Learning ──
+scikit-learn==1.6.1
+joblib==1.5.1
+numpy==2.2.6
+
+# ── Indic NLP ──
+indic-transliteration==2.3.70
+regex==2024.11.6
+
+# ── CORS / Utilities ──
+python-dotenv==1.1.0

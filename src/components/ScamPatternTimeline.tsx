@@ -72,9 +72,8 @@ export const ScamPatternTimeline: React.FC<ScamPatternTimelineProps> = ({ langua
 
   // Animate stages appearing one by one
   useEffect(() => {
-    setVisibleStages(0);
-    const stages = timeline.stages.length;
     let count = 0;
+    const stages = timeline.stages.length;
     const interval = setInterval(() => {
       count++;
       setVisibleStages(count);

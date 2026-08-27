@@ -8,7 +8,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import type { Language, UrlAnalysis } from '../types';
-import { simulateUrlAnalysis } from '../mockData';
+import { api } from '../api';
 
 interface UrlThreatAnalyzerProps {
   language: Language;
@@ -29,7 +29,7 @@ export const UrlThreatAnalyzer: React.FC<UrlThreatAnalyzerProps> = ({
     setResult(null);
 
     try {
-      const res = await simulateUrlAnalysis(url);
+      const res = await api.scanUrl(url);
       setResult(res);
     } finally {
       setIsScanning(false);

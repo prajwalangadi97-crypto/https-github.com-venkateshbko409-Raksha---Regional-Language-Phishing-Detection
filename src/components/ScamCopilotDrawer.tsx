@@ -15,6 +15,9 @@ interface ScamCopilotDrawerProps {
   onNavigateTo: (pillar: ActivePillar) => void;
 }
 
+let nextMsgId = 1;
+const generateMsgId = (prefix: string) => `${prefix}-${nextMsgId++}`;
+
 export const ScamCopilotDrawer: React.FC<ScamCopilotDrawerProps> = ({
   isOpen,
   onClose,
@@ -60,7 +63,7 @@ export const ScamCopilotDrawer: React.FC<ScamCopilotDrawerProps> = ({
     if (!text.trim()) return;
 
     const userMsg: CopilotMessage = {
-      id: `user-${Date.now()}`,
+      id: generateMsgId('user'),
       role: 'user',
       content: text,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -100,7 +103,7 @@ export const ScamCopilotDrawer: React.FC<ScamCopilotDrawerProps> = ({
       }
 
       const botMsg: CopilotMessage = {
-        id: `bot-${Date.now()}`,
+        id: generateMsgId('bot'),
         role: 'assistant',
         content: replyContent,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),

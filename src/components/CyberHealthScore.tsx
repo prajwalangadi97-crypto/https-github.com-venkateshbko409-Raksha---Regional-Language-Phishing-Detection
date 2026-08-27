@@ -198,21 +198,6 @@ export const CyberHealthScore: React.FC<CyberHealthScoreProps> = ({ language }) 
   const weakAreas: string[] = [];
   if (isComplete) {
     QUESTIONS.forEach((q, i) => {
-      const selectedOption = q.options.find((_) => {
-        // find which option has this score
-        let cumIdx = 0;
-        for (const opt of q.options) {
-          if (opt.score === answers[i] && cumIdx === 0) { cumIdx++; return true; }
-          cumIdx++;
-        }
-        return false;
-      });
-      if (selectedOption?.flag && !weakAreas.includes(selectedOption.flag)) {
-        weakAreas.push(selectedOption.flag);
-      }
-    });
-    // Also gather flags from answers
-    QUESTIONS.forEach((q, i) => {
       const chosen = q.options.find(o => o.score === answers[i]);
       if (chosen?.flag && !weakAreas.includes(chosen.flag)) {
         weakAreas.push(chosen.flag);

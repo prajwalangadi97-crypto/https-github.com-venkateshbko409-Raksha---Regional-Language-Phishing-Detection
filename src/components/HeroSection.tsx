@@ -102,64 +102,64 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         </div>
 
         {/* Live Telemetry Cards */}
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-          <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-3 text-center backdrop-blur-sm transition-all hover:border-cyan-500/40">
-            <div className="font-mono text-xl font-bold text-cyan-400 sm:text-2xl">
+        <div className="mt-8 grid grid-cols-2 gap-3.5 sm:grid-cols-3 lg:grid-cols-6">
+          <div className="figma-card p-3.5 text-center group cursor-default">
+            <div className="font-mono text-xl font-extrabold text-cyan-400 sm:text-2xl tracking-tight group-hover:scale-105 transition-transform">
               {telemetry.threatsBlocked.toLocaleString()}
             </div>
-            <div className="mt-1 text-[11px] font-medium text-slate-400">
+            <div className="mt-1 text-[11px] font-semibold text-slate-300">
               {language === 'kn' ? 'ತಡೆದ ಬೆದರಿಕೆಗಳು' : 'Threats Blocked'}
             </div>
           </div>
 
-          <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-3 text-center backdrop-blur-sm transition-all hover:border-emerald-500/40">
-            <div className="font-mono text-xl font-bold text-emerald-400 sm:text-2xl">
+          <div className="figma-card p-3.5 text-center group cursor-default">
+            <div className="font-mono text-xl font-extrabold text-emerald-400 sm:text-2xl tracking-tight group-hover:scale-105 transition-transform">
               {telemetry.scamsIntercepted.toLocaleString()}
             </div>
-            <div className="mt-1 text-[11px] font-medium text-slate-400">
+            <div className="mt-1 text-[11px] font-semibold text-slate-300">
               {language === 'kn' ? 'ತಡೆದ ವಂಚನೆಗಳು' : 'Scams Neutralized'}
             </div>
           </div>
 
-          <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-3 text-center backdrop-blur-sm transition-all hover:border-purple-500/40">
-            <div className="font-mono text-xl font-bold text-purple-400 sm:text-2xl">
+          <div className="figma-card p-3.5 text-center group cursor-default">
+            <div className="font-mono text-xl font-extrabold text-purple-400 sm:text-2xl tracking-tight group-hover:scale-105 transition-transform">
               {telemetry.citizensProtected.toLocaleString()}
             </div>
-            <div className="mt-1 text-[11px] font-medium text-slate-400">
+            <div className="mt-1 text-[11px] font-semibold text-slate-300">
               {language === 'kn' ? 'ರಕ್ಷಿತ ನಾಗರಿಕರು' : 'Citizens Shielded'}
             </div>
           </div>
 
-          <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-3 text-center backdrop-blur-sm transition-all hover:border-amber-500/40">
-            <div className="font-mono text-xl font-bold text-amber-400 sm:text-2xl">
+          <div className="figma-card p-3.5 text-center group cursor-default">
+            <div className="font-mono text-xl font-extrabold text-amber-400 sm:text-2xl tracking-tight group-hover:scale-105 transition-transform">
               {telemetry.muleTrapTriggers.toLocaleString()}
             </div>
-            <div className="mt-1 text-[11px] font-medium text-slate-400">
+            <div className="mt-1 text-[11px] font-semibold text-slate-300">
               {language === 'kn' ? 'ಬಂಧಿತ ಮ್ಯೂಲ್ ಖಾತೆಗಳು' : 'Mule Accounts Trapped'}
             </div>
           </div>
 
-          <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-3 text-center backdrop-blur-sm transition-all hover:border-rose-500/40">
-            <div className="font-mono text-xl font-bold text-rose-400 sm:text-2xl">
+          <div className="figma-card p-3.5 text-center group cursor-default">
+            <div className="font-mono text-xl font-extrabold text-rose-400 sm:text-2xl tracking-tight group-hover:scale-105 transition-transform">
               {telemetry.phishingUrlsDetected.toLocaleString()}
             </div>
-            <div className="mt-1 text-[11px] font-medium text-slate-400">
+            <div className="mt-1 text-[11px] font-semibold text-slate-300">
               {language === 'kn' ? 'ಪತ್ತೆಯಾದ URLಗಳು' : 'Phishing URLs Blocked'}
             </div>
           </div>
 
-          <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-3 text-center backdrop-blur-sm transition-all hover:border-blue-500/40">
-            <div className="font-mono text-xl font-bold text-blue-400 sm:text-2xl">
+          <div className="figma-card p-3.5 text-center group cursor-default">
+            <div className="font-mono text-xl font-extrabold text-blue-400 sm:text-2xl tracking-tight group-hover:scale-105 transition-transform">
               {telemetry.deepfakeCallsDetected.toLocaleString()}
             </div>
-            <div className="mt-1 text-[11px] font-medium text-slate-400">
+            <div className="mt-1 text-[11px] font-semibold text-slate-300">
               {language === 'kn' ? 'ಡೀಪ್‌ಫೇಕ್ ಕರೆಗಳು' : 'Deepfakes Flagged'}
             </div>
           </div>
         </div>
 
         {/* 1-Click Incident Audit Presets */}
-        <div className="mt-8 rounded-2xl border border-slate-800 bg-slate-900/50 p-4 sm:p-5 backdrop-blur-md">
+        <div className="mt-8 figma-card-static p-5 sm:p-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
             <div className="flex items-center gap-2">
               <ShieldAlert className="h-4 w-4 text-cyan-400" />
@@ -183,20 +183,20 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   onSelectPreset(preset.text);
                   onSelectPillar('phishing');
                 }}
-                className="group flex flex-col items-start rounded-xl border border-slate-800/90 bg-slate-950/60 p-3 text-left transition-all hover:border-cyan-500/50 hover:bg-slate-900/80"
+                className="group flex flex-col items-start rounded-xl border border-slate-800/80 bg-slate-950/70 p-3.5 text-left transition-all hover:border-cyan-500/50 hover:bg-slate-900 hover:shadow-lg hover:shadow-cyan-500/5"
               >
                 <div className="flex w-full items-center justify-between">
-                  <span className="rounded-md bg-slate-800 px-2 py-0.5 font-mono text-[10px] font-bold text-cyan-300">
+                  <span className="rounded-md bg-slate-800/90 border border-slate-700/60 px-2 py-0.5 font-mono text-[10px] font-bold text-cyan-300">
                     {preset.category}
                   </span>
-                  <span className="text-[10px] font-bold text-slate-500 group-hover:text-cyan-400">
+                  <span className="text-[10px] font-bold text-slate-500 group-hover:text-cyan-400 transition-colors">
                     {preset.language.toUpperCase()} →
                   </span>
                 </div>
-                <h4 className="mt-1.5 text-xs font-bold text-slate-200 group-hover:text-cyan-300">
+                <h4 className="mt-2 text-xs font-bold text-slate-200 group-hover:text-cyan-300 transition-colors">
                   {language === 'kn' ? preset.titleKn : preset.title}
                 </h4>
-                <p className="mt-1 line-clamp-2 text-[11px] text-slate-400 font-sans">
+                <p className="mt-1 line-clamp-2 text-[11px] text-slate-400 font-sans leading-relaxed">
                   {preset.text}
                 </p>
               </button>

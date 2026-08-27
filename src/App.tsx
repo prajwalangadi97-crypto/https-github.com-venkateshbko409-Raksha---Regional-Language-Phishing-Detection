@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
 import { HeroSection } from './components/HeroSection';
 import { CommandHubNavigator } from './components/CommandHubNavigator';
@@ -16,9 +16,23 @@ import { PaymentScamAnalyzer } from './components/PaymentScamAnalyzer';
 import { UrlThreatAnalyzer } from './components/UrlThreatAnalyzer';
 import { CyberTutorSection } from './components/CyberTutorSection';
 import { ScamCopilotDrawer } from './components/ScamCopilotDrawer';
+import { ThreatActivityFeed } from './components/ThreatActivityFeed';
+import { CyberHealthScore } from './components/CyberHealthScore';
+import { KarnatakaLiveThreatMap } from './components/KarnatakaLiveThreatMap';
+import { ScamPatternTimeline } from './components/ScamPatternTimeline';
+import { ScamSimulationLab } from './components/ScamSimulationLab';
+import { LiveChallenge } from './components/LiveChallenge';
+import { IncidentReportWizard } from './components/IncidentReportWizard';
+import { DarkWebLeakChecker } from './components/DarkWebLeakChecker';
+import { CommunityScamAlertWall } from './components/CommunityScamAlertWall';
+import { QRThreatScanner } from './components/QRThreatScanner';
+import { ScamStatisticsEngine } from './components/ScamStatisticsEngine';
+
+import { CenStationLocator } from './components/CenStationLocator';
 
 import type { Language, ActivePillar, TelemetryStats } from './types';
 import { initialTelemetry } from './data/karnatakaScamData';
+import { api } from './api';
 
 export function App() {
   const [language, setLanguage] = useState<Language>('en');
@@ -26,7 +40,14 @@ export function App() {
   const [seniorMode, setSeniorMode] = useState<boolean>(false);
   const [copilotOpen, setCopilotOpen] = useState<boolean>(false);
   const [presetPhishingText, setPresetPhishingText] = useState<string>('');
-  const [telemetry] = useState<TelemetryStats>(initialTelemetry);
+  const [telemetry, setTelemetry] = useState<TelemetryStats>(initialTelemetry);
+
+  // Fetch live telemetry from backend API
+  useEffect(() => {
+    api.getTelemetry()
+      .then((data: any) => setTelemetry(data))
+      .catch(() => { /* fallback to initialTelemetry */ });
+  }, []);
 
   const handleToggleLanguage = () => {
     setLanguage((prev) => (prev === 'en' ? 'kn' : 'en'));
@@ -43,7 +64,7 @@ export function App() {
 
   return (
     <div
-      className={`min-h-screen bg-slate-950 text-slate-100 selection:bg-cyan-500 selection:text-slate-950 ${
+      className={`min-h-screen cyber-mesh-bg text-slate-100 selection:bg-cyan-500 selection:text-slate-950 ${
         seniorMode ? 'senior-mode font-sans text-lg' : ''
       }`}
     >
@@ -84,12 +105,15 @@ export function App() {
               onSelectPreset={handleSelectPreset}
             />
 
+            {/* Live SIGINT Threat Activity Feed */}
+            <ThreatActivityFeed language={language} />
+
             {/* Embedded Live Radar on Dashboard */}
             <ScamCampaignRadar language={language} />
 
             {/* Embedded Phishing & Payment Triage on Dashboard */}
             <div className="border-t border-slate-800/80 pt-6">
-              <PaymentScamAnalyzer language={language} />
+              <PaymentScamAnalyzer language={language} onNavigateTo={setActivePillar} />
             </div>
           </div>
         )}
@@ -105,7 +129,10 @@ export function App() {
               <UrlThreatAnalyzer language={language} />
             </div>
             <div className="border-t border-slate-800/80 pt-4">
-              <PaymentScamAnalyzer language={language} />
+              <QRThreatScanner language={language} />
+            </div>
+            <div className="border-t border-slate-800/80 pt-4">
+              <PaymentScamAnalyzer language={language} onNavigateTo={setActivePillar} />
             </div>
           </div>
         )}
@@ -140,9 +167,21 @@ export function App() {
           </div>
         )}
 
+        {activePillar === 'cen-stations' && (
+          <div className="animate-fade-in">
+            <CenStationLocator language={language} onNavigateTo={setActivePillar} />
+          </div>
+        )}
+
         {activePillar === 'intelligence' && (
           <div className="space-y-8 animate-fade-in">
-            <ScamCampaignRadar language={language} />
+            <ScamStatisticsEngine language={language} />
+            <div className="border-t border-slate-800/80 pt-4">
+              <KarnatakaLiveThreatMap language={language} />
+            </div>
+            <div className="border-t border-slate-800/80 pt-4">
+              <ScamCampaignRadar language={language} />
+            </div>
             <div className="border-t border-slate-800/80 pt-4">
               <ScamDnaMemoryExplorer language={language} />
             </div>
@@ -153,8 +192,41 @@ export function App() {
         )}
 
         {activePillar === 'education' && (
+          <div className="space-y-8 animate-fade-in">
+            <ScamPatternTimeline language={language} />
+            <div className="border-t border-slate-800/80 pt-4">
+              <CyberTutorSection language={language} />
+            </div>
+            <div className="border-t border-slate-800/80 pt-4">
+              <ScamSimulationLab language={language} />
+            </div>
+            <div className="border-t border-slate-800/80 pt-4">
+              <LiveChallenge language={language} />
+            </div>
+          </div>
+        )}
+
+        {activePillar === 'cyber-health' && (
           <div className="animate-fade-in">
-            <CyberTutorSection language={language} />
+            <CyberHealthScore language={language} />
+          </div>
+        )}
+
+        {activePillar === 'breach-check' && (
+          <div className="animate-fade-in">
+            <DarkWebLeakChecker language={language} />
+          </div>
+        )}
+
+        {activePillar === 'community' && (
+          <div className="animate-fade-in">
+            <CommunityScamAlertWall language={language} />
+          </div>
+        )}
+
+        {activePillar === 'report' && (
+          <div className="animate-fade-in">
+            <IncidentReportWizard language={language} />
           </div>
         )}
       </main>

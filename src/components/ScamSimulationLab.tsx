@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Gamepad2,
   ShieldCheck,
@@ -6,9 +6,17 @@ import {
   RotateCcw,
   CheckCircle2,
   XCircle,
+  Flame,
+  Volume2,
+  Award,
+  Sparkles,
 } from 'lucide-react';
 import type { Language } from '../types';
-import { simulationScenarios } from '../data/karnatakaScamData';
+import {
+  interactiveScamScenarios,
+  type InteractiveSimulationScenario,
+  type SimulationOption,
+} from '../data/scamSimulationScenarios';
 
 interface ScamSimulationLabProps {
   language: Language;
@@ -17,47 +25,42 @@ interface ScamSimulationLabProps {
 export const ScamSimulationLab: React.FC<ScamSimulationLabProps> = ({
   language,
 }) => {
+  const isKn = language === 'kn';
   const [selectedScenarioIndex, setSelectedScenarioIndex] = useState(0);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [userScore, setUserScore] = useState(0);
-  const [selectedAction, setSelectedAction] = useState<string | null>(null);
-  const [feedback, setFeedback] = useState<{ isCorrect: boolean; text: string } | null>(null);
+  const [userScore, setUserScore] = useState(100);
+  const [selectedOption, setSelectedOption] = useState<SimulationOption | null>(null);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
 
-  const scenario = simulationScenarios[selectedScenarioIndex] || simulationScenarios[0];
-  const step = scenario.steps[currentStepIndex];
+  const scenario: InteractiveSimulationScenario =
+    interactiveScamScenarios[selectedScenarioIndex] || interactiveScamScenarios[0];
+  const step = scenario.steps[currentStepIndex] || scenario.steps[0];
 
-  const actions: ('BLOCK' | 'REPORT' | 'IGNORE' | 'VERIFY' | 'RESPOND')[] = [
-    'BLOCK',
-    'REPORT',
-    'IGNORE',
-    'VERIFY',
-    'RESPOND',
-  ];
+  useEffect(() => {
+    let active = true;
+    const startTimer = setTimeout(() => {
+      if (active) setIsTyping(true);
+    }, 0);
+    const stopTimer = setTimeout(() => {
+      if (active) setIsTyping(false);
+    }, 600);
+    return () => {
+      active = false;
+      clearTimeout(startTimer);
+      clearTimeout(stopTimer);
+    };
+  }, [currentStepIndex, selectedScenarioIndex]);
 
-  const handleAction = (action: typeof actions[number]) => {
-    if (feedback) return;
-    setSelectedAction(action);
-
-    const isCorrect = action === step.correctAction;
-    if (isCorrect) {
-      setUserScore((prev) => prev + 100);
-      setFeedback({
-        isCorrect: true,
-        text: language === 'kn' ? 'ಸರಿಯಾದ ನಿರ್ಧಾರ! ' + (step.hintKn || '') : 'Correct Action! ' + (step.hint || ''),
-      });
-    } else {
-      setFeedback({
-        isCorrect: false,
-        text: language === 'kn' ? 'ತಪ್ಪು ನಿರ್ಧಾರ! ಸರಿಯಾದ ಕ್ರಮ: ' + step.correctAction + '. ' + (step.hintKn || '') : 'Wrong Action! The safer response is ' + step.correctAction + '. ' + (step.hint || ''),
-      });
-    }
+  const handleSelectOption = (option: SimulationOption) => {
+    if (selectedOption) return;
+    setSelectedOption(option);
+    setUserScore((prev) => Math.max(0, prev + option.scoreDelta));
   };
 
   const handleNextStep = () => {
-    setSelectedAction(null);
-    setFeedback(null);
-
+    setSelectedOption(null);
     if (currentStepIndex + 1 < scenario.steps.length) {
       setCurrentStepIndex((prev) => prev + 1);
     } else {
@@ -68,182 +71,320 @@ export const ScamSimulationLab: React.FC<ScamSimulationLabProps> = ({
   const handleResetScenario = (idx: number) => {
     setSelectedScenarioIndex(idx);
     setCurrentStepIndex(0);
-    setUserScore(0);
-    setSelectedAction(null);
-    setFeedback(null);
+    setUserScore(100);
+    setSelectedOption(null);
     setIsCompleted(false);
+    window.speechSynthesis?.cancel();
+    setIsPlayingAudio(false);
+  };
+
+  const playSimulatedVoiceNote = (text: string) => {
+    if (isPlayingAudio) {
+      window.speechSynthesis?.cancel();
+      setIsPlayingAudio(false);
+      return;
+    }
+    setIsPlayingAudio(true);
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.pitch = 0.9;
+      utterance.rate = 1.05;
+      utterance.onend = () => setIsPlayingAudio(false);
+      utterance.onerror = () => setIsPlayingAudio(false);
+      window.speechSynthesis.speak(utterance);
+    } else {
+      setTimeout(() => setIsPlayingAudio(false), 3000);
+    }
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-8 animate-fade-in text-slate-100">
       {/* Header */}
-      <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-sky-500/20 text-sky-400">
-              <Gamepad2 className="h-4 w-4" />
+            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-sky-500/20 text-sky-400 border border-sky-500/30">
+              <Gamepad2 className="h-5 w-5" />
             </span>
             <h2 className="text-xl font-bold text-slate-100 sm:text-2xl">
-              {language === 'kn'
-                ? 'ಸೈಬರ್ ವಂಚನೆ ತಡೆ ಸಿಮ್ಯುಲೇಶನ್ ಲ್ಯಾಬ್'
-                : 'Interactive Scam Simulation & Roleplay Lab'}
+              {isKn
+                ? 'ಸೈಬರ್ ವಂಚನೆ ತಡೆ ಸಿಮ್ಯುಲೇಶನ್ ಲ್ಯಾಬ್ & ಚಾಟ್ ಗೇಮ್'
+                : 'Interactive Scammer Chat Simulator & Defense Lab'}
             </h2>
           </div>
           <p className="mt-1 text-xs text-slate-400 sm:text-sm">
-            {language === 'kn'
-              ? 'ನೈಜ ವಂಚನಾ ಸನ್ನಿವೇಶಗಳಲ್ಲಿ ಸುರಕ್ಷಿತ ನಿರ್ಧಾರಗಳನ್ನು ತೆಗೆದುಕೊಳ್ಳುವ ಅಭ್ಯಾಸ ನಡೆಸಿ.'
-              : 'Practice making tactical counter-decisions in realistic multi-step scam scenarios.'}
+            {isKn
+              ? 'ಲೈವ್ ವಾಟ್ಸಾಪ್ ಮತ್ತು ಟೆಲಿಗ್ರಾಮ್ ವಂಚನಾ ಚಾಟ್‌ಗಳನ್ನು ಎದುರಿಸಿ ಸರಿಯಾದ ನಿರ್ಧಾರ ತೆಗೆದುಕೊಳ್ಳುವ ಕೌಶಲ ಬೆಳೆಸಿಕೊಳ್ಳಿ.'
+              : 'Face off against realistic simulated scam conversations and practice psychological counter-defenses.'}
           </p>
         </div>
 
-        <div className="flex items-center gap-2 font-mono text-xs text-cyan-400 bg-slate-900/80 border border-slate-800 px-3.5 py-1.5 rounded-xl">
-          <span>TRAINING SCORE: {userScore} PTS</span>
+        {/* Score Multiplier Badge */}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 font-mono text-xs text-cyan-300 bg-slate-900 border border-cyan-500/30 px-4 py-2 rounded-xl shadow-lg">
+            <Award className="h-4 w-4 text-amber-400" />
+            <span>CYBER DEFENSE SCORE: <strong className="text-white text-sm">{userScore} PTS</strong></span>
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-        {/* Left: Scenarios Selector (4 cols) */}
-        <div className="lg:col-span-4 flex flex-col gap-3">
-          {simulationScenarios.map((sc, idx) => (
+      {/* Scenario Selector Carousel Bar */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        {interactiveScamScenarios.map((sc, idx) => {
+          const isSelected = selectedScenarioIndex === idx;
+          return (
             <button
               key={sc.id}
-              type="button"
               onClick={() => handleResetScenario(idx)}
-              className={`flex flex-col items-start rounded-2xl border p-4 text-left transition-all ${
-                selectedScenarioIndex === idx
-                  ? 'border-sky-500 bg-sky-950/40 text-slate-100 shadow-md'
-                  : 'border-slate-800 bg-slate-950/60 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+              className={`p-3.5 rounded-xl border text-left transition-all relative overflow-hidden ${
+                isSelected
+                  ? 'border-cyan-500 bg-cyan-950/40 shadow-lg shadow-cyan-950/40'
+                  : 'border-slate-800 bg-slate-900/60 hover:bg-slate-800/60'
               }`}
             >
-              <div className="flex w-full items-center justify-between">
-                <span className="text-xs font-bold text-slate-200">
-                  {language === 'kn' ? sc.titleKn : sc.title}
-                </span>
-                <span className="rounded bg-slate-800 px-2 py-0.5 font-mono text-[9px] font-bold text-sky-400">
+              <div className="flex items-center justify-between text-[10px] font-mono text-slate-400">
+                <span>{sc.category}</span>
+                <span className="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-bold">
                   {sc.difficulty}
                 </span>
               </div>
-              <p className="mt-1.5 text-[11px] text-slate-400 line-clamp-2">
-                {language === 'kn' ? sc.descriptionKn : sc.description}
+              <h4 className="text-xs font-bold text-white mt-1 line-clamp-1">
+                {isKn ? sc.titleKn : sc.title}
+              </h4>
+              <p className="text-[11px] text-slate-400 line-clamp-2 mt-1">
+                {isKn ? sc.descriptionKn : sc.descriptionEn}
               </p>
             </button>
-          ))}
+          );
+        })}
+      </div>
+
+      {/* Main Simulation Simulator Screen */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Left Column: WhatsApp / Messenger Style Chat Screen (7 cols) */}
+        <div className="lg:col-span-7 flex flex-col">
+          <div className="rounded-2xl border border-slate-800 bg-slate-950 overflow-hidden shadow-2xl flex flex-col h-[560px]">
+            {/* Top Scammer Contact Header */}
+            <div className="p-3.5 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-slate-800 flex items-center justify-center text-xl border border-slate-700">
+                  {step.senderAvatar}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-bold text-white">{step.senderName}</span>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 font-mono font-bold">
+                      UNVERIFIED
+                    </span>
+                  </div>
+                  <span className="text-xs text-slate-400 font-mono">{scenario.attackerHandle}</span>
+                </div>
+              </div>
+
+              {/* Psychological coercion tag */}
+              <div className="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg bg-rose-950/80 border border-rose-500/30 text-rose-300 font-mono">
+                <Flame className="h-3.5 w-3.5 text-rose-400 animate-pulse" />
+                <span>{step.coercionType}</span>
+              </div>
+            </div>
+
+            {/* Chat Body Stream */}
+            <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-gradient-to-b from-slate-950 via-slate-950 to-slate-900/60">
+              {/* System encryption notice */}
+              <div className="text-center">
+                <span className="text-[10px] font-mono text-slate-500 bg-slate-900/80 px-3 py-1 rounded-full border border-slate-800">
+                  ⚠️ SIMULATED ADVERSARY THREAT ENCOUNTER • STEP {currentStepIndex + 1} OF {scenario.steps.length}
+                </span>
+              </div>
+
+              {/* Attacker Message Bubble */}
+              <div className="flex items-start gap-2.5 max-w-[85%]">
+                <div className="h-7 w-7 rounded-full bg-slate-800 flex items-center justify-center text-sm shrink-0 mt-1">
+                  {step.senderAvatar}
+                </div>
+                <div className="space-y-1.5">
+                  <div className="p-3.5 rounded-2xl rounded-tl-none bg-slate-900 border border-slate-800 text-xs sm:text-sm text-slate-100 leading-relaxed shadow-lg">
+                    {isKn ? step.messageKn : step.messageEn}
+                  </div>
+
+                  {/* Voice Note attachment if available */}
+                  {step.hasVoiceNote && (
+                    <div className="p-2.5 rounded-xl bg-slate-900/80 border border-cyan-500/30 flex items-center justify-between gap-3 text-xs">
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => playSimulatedVoiceNote(isKn ? step.messageKn : step.messageEn)}
+                          className="h-7 w-7 rounded-full bg-cyan-500 text-slate-950 flex items-center justify-center hover:scale-105 transition-all"
+                        >
+                          <Volume2 className="h-3.5 w-3.5" />
+                        </button>
+                        <span className="text-cyan-300 font-mono">Voice Note ({step.voiceNoteDuration})</span>
+                      </div>
+                      <span className="text-[10px] text-slate-500 font-mono">Simulated Audio</span>
+                    </div>
+                  )}
+
+                  <span className="text-[10px] text-slate-500 block font-mono pl-1">Delivered • Just now</span>
+                </div>
+              </div>
+
+              {/* Typing indicator */}
+              {isTyping && (
+                <div className="flex items-center gap-1.5 text-xs text-slate-400 pl-10 font-mono">
+                  <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-bounce" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-bounce [animation-delay:0.2s]" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-bounce [animation-delay:0.4s]" />
+                  <span>{step.senderName} is typing...</span>
+                </div>
+              )}
+
+              {/* User Chosen Option Bubble if answered */}
+              {selectedOption && (
+                <div className="flex items-end justify-end gap-2 max-w-[85%] ml-auto animate-fade-in">
+                  <div className="p-3.5 rounded-2xl rounded-tr-none bg-cyan-600 text-slate-950 font-medium text-xs sm:text-sm leading-relaxed shadow-lg">
+                    {isKn ? selectedOption.textKn : selectedOption.text}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Chat Bottom Bar */}
+            <div className="p-3 bg-slate-900 border-t border-slate-800 text-xs text-slate-400 flex items-center justify-between">
+              <span className="font-mono text-[11px]">Select your defensive countermove on the right panel 👉</span>
+              <button
+                onClick={() => handleResetScenario(selectedScenarioIndex)}
+                className="flex items-center gap-1 text-[11px] hover:text-white transition-all text-slate-400"
+              >
+                <RotateCcw className="h-3 w-3" />
+                Reset
+              </button>
+            </div>
+          </div>
         </div>
 
-        {/* Right: Simulation Interactive Stage (8 cols) */}
-        <div className="lg:col-span-8">
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 backdrop-blur-md">
-            {!isCompleted ? (
+        {/* Right Column: Countermeasure Decision Deck & Feedback (5 cols) */}
+        <div className="lg:col-span-5 flex flex-col gap-4">
+          {!isCompleted ? (
+            <div className="rounded-2xl border border-slate-800 bg-slate-900/90 p-5 backdrop-blur-md shadow-xl flex-1 flex flex-col justify-between space-y-4">
               <div>
                 <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
-                  <span className="font-mono text-xs text-slate-400">
-                    Step {currentStepIndex + 1} of {scenario.steps.length}
-                  </span>
-                  <span className="text-xs font-bold text-sky-400 font-mono">
-                    SCAMMER TRANSMISSION
-                  </span>
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-slate-200 flex items-center gap-2">
+                    <ShieldCheck className="h-4 w-4 text-cyan-400" />
+                    <span>{isKn ? 'ನಿಮ್ಮ ರಕ್ಷಣಾತ್ಮಕ ಪ್ರತಿಕ್ರಿಯೆಯನ್ನು ಆರಿಸಿ' : 'Choose Your Defense Response'}</span>
+                  </h3>
+                  <span className="text-xs font-mono text-slate-400">Step {currentStepIndex + 1} of {scenario.steps.length}</span>
                 </div>
 
-                {/* Scammer Incoming Prompt Bubble */}
-                <div className="rounded-2xl border border-red-500/40 bg-red-950/30 p-4 text-red-100 text-sm leading-relaxed mb-6">
-                  <div className="text-[10px] font-bold uppercase text-red-400 mb-1 font-mono">
-                    Incoming Message:
-                  </div>
-                  "{language === 'kn' ? step.messageKn : step.message}"
-                </div>
-
-                {/* Action Buttons */}
-                <div className="mb-6">
-                  <div className="text-xs font-bold uppercase text-slate-300 mb-3">
-                    {language === 'kn' ? 'ನಿಮ್ಮ ತಕ್ಷಣದ ಪ್ರತಿಕ್ರಿಯೆಯನ್ನು ಆರಿಸಿ:' : 'Choose Your Tactical Defense Action:'}
-                  </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-                    {actions.map((act) => (
+                <div className="space-y-3">
+                  {step.options.map((opt) => {
+                    const isPicked = selectedOption?.id === opt.id;
+                    return (
                       <button
-                        key={act}
-                        type="button"
-                        onClick={() => handleAction(act)}
-                        disabled={feedback !== null}
-                        className={`rounded-xl border py-2.5 text-xs font-bold transition-all ${
-                          selectedAction === act
-                            ? 'border-sky-400 bg-sky-500 text-slate-950 shadow-md'
-                            : 'border-slate-800 bg-slate-950 text-slate-300 hover:border-sky-500/60 hover:text-white'
+                        key={opt.id}
+                        disabled={selectedOption !== null}
+                        onClick={() => handleSelectOption(opt)}
+                        className={`w-full text-left p-4 rounded-xl border text-xs sm:text-sm transition-all relative ${
+                          isPicked
+                            ? opt.isOptimal
+                              ? 'border-emerald-500 bg-emerald-950/40 text-white shadow-lg'
+                              : 'border-rose-500 bg-rose-950/40 text-white shadow-lg'
+                            : selectedOption
+                            ? 'border-slate-800 bg-slate-950/40 text-slate-500 cursor-not-allowed'
+                            : 'border-slate-800 bg-slate-950/80 hover:bg-slate-800 hover:border-cyan-500/60 text-slate-200'
                         }`}
                       >
-                        {act}
+                        <div className="flex items-start gap-2.5">
+                          <span className="h-5 w-5 rounded-full border border-slate-700 flex items-center justify-center shrink-0 text-xs font-bold text-cyan-400 mt-0.5">
+                            {opt.isOptimal ? '✓' : '!'}
+                          </span>
+                          <span className="leading-relaxed">{isKn ? opt.textKn : opt.text}</span>
+                        </div>
                       </button>
-                    ))}
-                  </div>
+                    );
+                  })}
                 </div>
 
-                {/* Feedback Box */}
-                {feedback && (
+                {/* Instant Feedback Analysis */}
+                {selectedOption && (
                   <div
-                    className={`rounded-xl border p-4 text-xs leading-relaxed mb-4 ${
-                      feedback.isCorrect
-                        ? 'border-emerald-500/50 bg-emerald-950/40 text-emerald-200'
-                        : 'border-red-500/50 bg-red-950/40 text-red-200'
+                    className={`mt-4 p-4 rounded-xl border animate-fade-in ${
+                      selectedOption.isOptimal
+                        ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-200'
+                        : 'bg-rose-950/40 border-rose-500/40 text-rose-200'
                     }`}
                   >
-                    <div className="flex items-center gap-2 font-bold mb-1">
-                      {feedback.isCorrect ? (
+                    <div className="flex items-center gap-2 font-bold text-xs">
+                      {selectedOption.isOptimal ? (
                         <CheckCircle2 className="h-4 w-4 text-emerald-400" />
                       ) : (
-                        <XCircle className="h-4 w-4 text-red-400" />
+                        <XCircle className="h-4 w-4 text-rose-400" />
                       )}
-                      <span>{feedback.isCorrect ? 'SUCCESSFUL DEFENSE' : 'RISKY RESPONSE'}</span>
-                    </div>
-                    <span>{feedback.text}</span>
-                  </div>
-                )}
-
-                {/* Advance Button */}
-                {feedback && (
-                  <div className="flex justify-end">
-                    <button
-                      type="button"
-                      onClick={handleNextStep}
-                      className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-sky-500 to-cyan-500 px-5 py-2 text-xs font-bold text-slate-950 shadow-md hover:scale-105"
-                    >
                       <span>
-                        {currentStepIndex + 1 < scenario.steps.length
-                          ? language === 'kn'
-                            ? 'ಮುಂದಿನ ಹಂತ'
-                            : 'Next Step'
-                          : language === 'kn'
-                          ? 'ಫಲಿತಾಂಶ ನೋಡಿ'
-                          : 'Complete Scenario'}
+                        {selectedOption.isOptimal
+                          ? isKn
+                            ? 'ಅತ್ಯುತ್ತಮ ರಕ್ಷಣಾತ್ಮಕ ನಿರ್ಧಾರ (+40 ಅಂಕಗಳು)'
+                            : 'TACTICAL CYBER DEFENSE MOVE (+40 PTS)'
+                          : isKn
+                          ? 'ಅಪಾಯಕಾರಿ ತಪ್ಪು (-50 ಅಂಕಗಳು)'
+                          : 'FATAL COERCION TRAP TRIGGERED (-50 PTS)'}
                       </span>
-                      <ArrowRight className="h-4 w-4" />
-                    </button>
+                    </div>
+                    <p className="text-xs mt-1.5 leading-relaxed text-slate-200">
+                      {isKn ? selectedOption.feedbackKn : selectedOption.feedbackEn}
+                    </p>
                   </div>
                 )}
               </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-10 text-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400 mb-3">
-                  <ShieldCheck className="h-8 w-8" />
-                </div>
-                <h3 className="text-xl font-bold text-slate-100">
-                  {language === 'kn' ? 'ಸಿಮ್ಯುಲೇಶನ್ ಯಶಸ್ವಿಯಾಗಿ ಪೂರ್ಣಗೊಂಡಿದೆ!' : 'Scenario Successfully Cleared!'}
-                </h3>
-                <p className="mt-1 text-xs text-slate-400 max-w-sm">
-                  {language === 'kn'
-                    ? `ನೀವು ಗಳಿಸಿದ ಅಂಕಗಳು: ${userScore} PTS. ನೀವು ವಂಚಕರ ಒತ್ತಡ ತಂತ್ರಗಳನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಹಿಮ್ಮೆಟ್ಟಿಸಿದ್ದೀರಿ.`
-                    : `Final Score: ${userScore} PTS. You successfully defended against psychological pressure and syndicate traps.`}
-                </p>
 
+              {/* Next Step Action Button */}
+              {selectedOption && (
                 <button
-                  type="button"
-                  onClick={() => handleResetScenario(selectedScenarioIndex)}
-                  className="mt-6 flex items-center gap-1.5 rounded-xl bg-slate-800 border border-slate-700 px-4 py-2 text-xs font-bold text-slate-200 hover:text-white"
+                  onClick={handleNextStep}
+                  className="w-full py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20 transition-all"
                 >
-                  <RotateCcw className="h-3.5 w-3.5" />
-                  <span>Replay Scenario</span>
+                  <span>{currentStepIndex + 1 < scenario.steps.length ? (isKn ? 'ಮುಂದಿನ ಹಂತಕ್ಕೆ ಹೋಗಿ' : 'Proceed to Next Step') : (isKn ? 'ಫಲಿತಾಂಶ ವೀಕ್ಷಿಸಿ' : 'View Mission Debrief')}</span>
+                  <ArrowRight className="h-4 w-4" />
                 </button>
+              )}
+            </div>
+          ) : (
+            /* Mission Complete Debrief Card */
+            <div className="rounded-2xl border border-cyan-500/40 bg-slate-900/90 p-6 backdrop-blur-md shadow-2xl flex-1 flex flex-col justify-between space-y-4 animate-fade-in">
+              <div className="space-y-4">
+                <div className="text-center space-y-2">
+                  <div className="h-14 w-14 rounded-2xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 mx-auto">
+                    <Sparkles className="h-7 w-7" />
+                  </div>
+                  <h3 className="text-lg font-bold text-white">
+                    {isKn ? 'ಸಿಮ್ಯುಲೇಶನ್ ಯಶಸ್ವಿಯಾಗಿ ಪೂರ್ಣಗೊಂಡಿದೆ!' : 'Simulation Mission Accomplished!'}
+                  </h3>
+                  <p className="text-xs text-slate-400">
+                    {isKn ? 'ನಿಮ್ಮ ಸೈಬರ್ ರಕ್ಷಣಾ ಕೌಶಲಗಳು ಪರಿಶೀಲಿಸಲ್ಪಟ್ಟಿವೆ.' : 'You have completed this adversary engagement drill.'}
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                  <span className="text-[11px] font-mono text-cyan-400 font-bold uppercase block">
+                    {isKn ? 'ಮುಖ್ಯ ಸುರಕ್ಷತಾ ಸೂತ್ರ (Golden Rule):' : 'Golden Rule & Defense Takeaway:'}
+                  </span>
+                  <p className="text-xs text-slate-200 leading-relaxed font-medium">
+                    {isKn ? scenario.goldenRuleKn : scenario.goldenRuleEn}
+                  </p>
+                </div>
               </div>
-            )}
-          </div>
+
+              <button
+                onClick={() => {
+                  const nextIdx = (selectedScenarioIndex + 1) % interactiveScamScenarios.length;
+                  handleResetScenario(nextIdx);
+                }}
+                className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20 transition-all"
+              >
+                <span>{isKn ? 'ಮುಂದಿನ ಸನ್ನಿವೇಶ ಪ್ಲೇ ಮಾಡಿ' : 'Play Next Scenario Drill'}</span>
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

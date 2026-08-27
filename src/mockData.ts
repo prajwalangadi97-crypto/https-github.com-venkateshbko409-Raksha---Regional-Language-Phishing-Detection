@@ -409,7 +409,7 @@ export async function simulatePhishingAnalysis(text: string): Promise<PhishingAn
 export async function simulateUrlAnalysis(url: string): Promise<UrlAnalysis> {
   await delay(rand(800, 1500));
 
-  const domainMatch = url.match(/(?:https?:\/\/)?([^\/\s]+)/);
+  const domainMatch = url.match(/(?:https?:\/\/)?([^/\s]+)/);
   const domain = domainMatch ? domainMatch[1] : url;
   const tldMatch = domain.match(/\.([a-z]+)$/);
   const tld = tldMatch ? tldMatch[1] : 'unknown';

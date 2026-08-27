@@ -4,7 +4,6 @@ import {
   AlertTriangle,
   ShieldCheck,
   Zap,
-  Globe2,
   Phone,
   CreditCard,
   ExternalLink,
@@ -17,8 +16,10 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import type { Language, PhishingAnalysis, ActivePillar } from '../types';
-import { simulatePhishingAnalysis } from '../mockData';
+import { api } from '../api';
 import { presetPhishingSamples } from '../data/karnatakaScamData';
+
+import { ImageOcrScanner } from './ImageOcrScanner';
 
 interface PhishingScannerProps {
   language: Language;
@@ -31,18 +32,32 @@ export const PhishingScanner: React.FC<PhishingScannerProps> = ({
   initialText = '',
   onNavigateTo,
 }) => {
+  const [activeMode, setActiveMode] = useState<'text' | 'ocr'>('text');
   const [inputText, setInputText] = useState(initialText);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<PhishingAnalysis | null>(null);
   const [copied, setCopied] = useState(false);
-  const [ocrStatus, setOcrStatus] = useState<string | null>(null);
 
   // Sync initialText if passed from presets
   React.useEffect(() => {
-    if (initialText) {
+    if (!initialText) return;
+    const timer = setTimeout(() => {
       setInputText(initialText);
-      handleAnalyze(initialText);
-    }
+      const runAnalysis = async () => {
+        setIsAnalyzing(true);
+        setResult(null);
+        try {
+          const res = await api.analyzePhishing(initialText);
+          setResult(res);
+        } catch (err) {
+          console.error(err);
+        } finally {
+          setIsAnalyzing(false);
+        }
+      };
+      runAnalysis();
+    }, 0);
+    return () => clearTimeout(timer);
   }, [initialText]);
 
   const handleAnalyze = async (textToScan?: string) => {
@@ -52,7 +67,7 @@ export const PhishingScanner: React.FC<PhishingScannerProps> = ({
     setIsAnalyzing(true);
     setResult(null);
     try {
-      const res = await simulatePhishingAnalysis(text);
+      const res = await api.analyzePhishing(text);
       setResult(res);
     } catch (err) {
       console.error(err);
@@ -61,23 +76,10 @@ export const PhishingScanner: React.FC<PhishingScannerProps> = ({
     }
   };
 
-  const handleOcrSimulation = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setOcrStatus(
-      language === 'kn'
-        ? 'ಚಿತ್ರದಿಂದ ಪಠ್ಯವನ್ನು ಹೊರತೆಗೆಯಲಾಗುತ್ತಿದೆ (OCR)...'
-        : 'Extracting multilingual Indic text from screenshot (OCR)...'
-    );
-
-    setTimeout(() => {
-      // Pick an indicative OCR text from presets
-      const ocrSample = presetPhishingSamples[0].text;
-      setInputText(ocrSample);
-      setOcrStatus(null);
-      handleAnalyze(ocrSample);
-    }, 1400);
+  const handleSendOcrText = (extractedText: string) => {
+    setInputText(extractedText);
+    setActiveMode('text');
+    handleAnalyze(extractedText);
   };
 
   const handleCopyReport = () => {
@@ -113,9 +115,9 @@ Analysis: ${result.explanation}`;
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-6">
       {/* Section Header */}
-      <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
             <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-teal-500/20 text-teal-400">
@@ -134,49 +136,67 @@ Analysis: ${result.explanation}`;
           </p>
         </div>
 
-        {/* Quick Language Support Badge */}
-        <div className="flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-900/60 px-3 py-1.5 text-xs text-slate-400">
-          <Globe2 className="h-4 w-4 text-cyan-400" />
-          <span>12 Indic Languages Supported</span>
+        {/* Mode Switcher */}
+        <div className="flex items-center rounded-xl bg-slate-900 border border-slate-800 p-1 text-xs font-semibold">
+          <button
+            onClick={() => setActiveMode('text')}
+            className={`px-3.5 py-1.5 rounded-lg transition-all ${
+              activeMode === 'text'
+                ? 'bg-cyan-500 text-slate-950 font-bold shadow'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            {language === 'kn' ? 'ಪಠ್ಯ / SMS ಸ್ಕ್ಯಾನ್' : 'Text / SMS Scanner'}
+          </button>
+          <button
+            onClick={() => setActiveMode('ocr')}
+            className={`px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 transition-all ${
+              activeMode === 'ocr'
+                ? 'bg-cyan-500 text-slate-950 font-bold shadow'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Upload className="h-3.5 w-3.5" />
+            <span>{language === 'kn' ? 'ಚಿತ್ರ OCR ಸ್ಕ್ಯಾನರ್' : 'Screenshot Vision OCR'}</span>
+          </button>
         </div>
       </div>
 
-      {/* Main Analysis Workspace */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-        {/* Left Column: Input & Presets (7 cols) */}
-        <div className="lg:col-span-7 flex flex-col gap-4">
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 backdrop-blur-md">
-            <div className="flex items-center justify-between mb-3">
-              <label htmlFor="phishing-input" className="text-xs font-bold uppercase tracking-wider text-slate-300">
-                {language === 'kn' ? 'ಸಂದೇಶ ಅಥವಾ URL ಅನ್ನು ನಮೂದಿಸಿ' : 'Paste Suspicious Text / SMS / URL'}
-              </label>
-              <div className="flex items-center gap-2">
-                {/* Simulated OCR Upload */}
-                <label className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800/80 px-2.5 py-1 text-[11px] font-semibold text-slate-300 transition-all hover:border-cyan-500 hover:text-cyan-300">
-                  <Upload className="h-3.5 w-3.5 text-cyan-400" />
-                  <span>{language === 'kn' ? 'ಸ್ಕ್ರೀನ್‌ಶಾಟ್ OCR' : 'Screenshot OCR'}</span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleOcrSimulation}
-                  />
+      {/* Render ImageOcrScanner if in OCR Mode */}
+      {activeMode === 'ocr' && (
+        <ImageOcrScanner
+          language={language}
+          onNavigateTo={onNavigateTo}
+          onSendToPhishing={handleSendOcrText}
+        />
+      )}
+
+      {/* Render Standard Text Scanner if in Text Mode */}
+      {activeMode === 'text' && (
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+          {/* Left Column: Input & Presets (7 cols) */}
+          <div className="lg:col-span-7 flex flex-col gap-4">
+            <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 backdrop-blur-md">
+              <div className="flex items-center justify-between mb-3">
+                <label htmlFor="phishing-input" className="text-xs font-bold uppercase tracking-wider text-slate-300">
+                  {language === 'kn' ? 'ಸಂದೇಶ ಅಥವಾ URL ಅನ್ನು ನಮೂದಿಸಿ' : 'Paste Suspicious Text / SMS / URL'}
                 </label>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setActiveMode('ocr')}
+                    className="flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800/80 px-2.5 py-1 text-[11px] font-semibold text-slate-300 transition-all hover:border-cyan-500 hover:text-cyan-300"
+                  >
+                    <Upload className="h-3.5 w-3.5 text-cyan-400" />
+                    <span>{language === 'kn' ? 'ಸ್ಕ್ರೀನ್‌ಶಾಟ್ OCR' : 'Screenshot OCR'}</span>
+                  </button>
+                </div>
               </div>
-            </div>
 
-            {ocrStatus && (
-              <div className="mb-3 flex items-center gap-2 rounded-lg bg-cyan-950/40 border border-cyan-500/30 p-2.5 text-xs text-cyan-300 animate-pulse">
-                <RefreshCw className="h-3.5 w-3.5 animate-spin" />
-                <span>{ocrStatus}</span>
-              </div>
-            )}
-
-            <textarea
-              id="phishing-input"
-              rows={5}
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
+              <textarea
+                id="phishing-input"
+                rows={5}
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
               placeholder={
                 language === 'kn'
                   ? 'ಉದಾಹರಣೆ: "ನಿಮ್ಮ ಬೆಸ್ಕಾಂ ವಿದ್ಯುತ್ ಬಿಲ್ ₹3,450 ಬಾಕಿಯಿದೆ. ಇಂದು ರಾತ್ರಿ 9:30 ಕ್ಕೆ ಕಡಿತವಾಗಲಿದೆ. ಪಾವತಿಸಲು ಕ್ಲಿಕ್ ಮಾಡಿ: bescom-pay.top/karnataka"'
@@ -413,6 +433,7 @@ Analysis: ${result.explanation}`;
           )}
         </div>
       </div>
+      )}
     </div>
   );
 };

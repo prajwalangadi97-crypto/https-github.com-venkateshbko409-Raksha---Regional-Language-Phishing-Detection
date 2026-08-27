@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   LayoutDashboard,
   FileSearch,
@@ -8,6 +7,11 @@ import {
   Flame,
   Network,
   GraduationCap,
+  HeartPulse,
+  ShieldOff,
+  Megaphone,
+  FileWarning,
+  Building2,
 } from 'lucide-react';
 import type { ActivePillar, Language } from '../types';
 
@@ -49,7 +53,7 @@ export const CommandHubNavigator: React.FC<CommandHubNavigatorProps> = ({
       descKn: '12 ಭಾಷೆಗಳ ಎಸ್‌ಎಂಎಸ್ / ಲಿಂಕ್ ವಿಶ್ಲೇಷಣೆ',
       icon: FileSearch,
       accent: 'teal',
-      badge: 'MULTIMODAL',
+      badge: 'VISION OCR',
     },
     {
       id: 'voice',
@@ -59,7 +63,7 @@ export const CommandHubNavigator: React.FC<CommandHubNavigatorProps> = ({
       descKn: 'ಡೀಪ್‌ಫೇಕ್ ಆಡಿಯೋ & ಸೇಫ್ ವರ್ಡ್',
       icon: Mic,
       accent: 'blue',
-      badge: 'SPECTRAL AI',
+      badge: 'LIVE MIC',
     },
     {
       id: 'honeypot',
@@ -79,6 +83,7 @@ export const CommandHubNavigator: React.FC<CommandHubNavigatorProps> = ({
       descKn: 'ಸೈಡ್‌ಲೋಡ್ ಆ್ಯಪ್ & C2 ಸರ್ವರ್ ತಪಾಸಣೆ',
       icon: Smartphone,
       accent: 'emerald',
+      badge: 'SANDBOX',
     },
     {
       id: 'golden-hour',
@@ -89,6 +94,16 @@ export const CommandHubNavigator: React.FC<CommandHubNavigatorProps> = ({
       icon: Flame,
       accent: 'red',
       badge: 'URGENT',
+    },
+    {
+      id: 'cen-stations',
+      name: 'CEN Stations & FIR',
+      nameKn: 'CEN ಠಾಣೆಗಳು & FIR',
+      desc: '31 Karnataka Cyber Police SOS & Legal Drafts',
+      descKn: 'ಕರ್ನಾಟಕ 31 ಜಿಲ್ಲಾ ಸೈಬರ್ ಠಾಣೆಗಳು & FIR',
+      icon: Building2,
+      accent: 'cyan',
+      badge: 'SOS',
     },
     {
       id: 'intelligence',
@@ -108,13 +123,51 @@ export const CommandHubNavigator: React.FC<CommandHubNavigatorProps> = ({
       icon: GraduationCap,
       accent: 'sky',
     },
+    {
+      id: 'cyber-health',
+      name: 'Cyber Health',
+      nameKn: 'ಸೈಬರ್ ಆರೋಗ್ಯ',
+      desc: 'Personal Security Score & Assessment',
+      descKn: 'ವೈಯಕ್ತಿಕ ಸುರಕ್ಷತಾ ಮೌಲ್ಯಮಾಪನ',
+      icon: HeartPulse,
+      accent: 'rose',
+      badge: 'SCORE',
+    },
+    {
+      id: 'breach-check',
+      name: 'Leak Check',
+      nameKn: 'ಸೋರಿಕೆ ಪರೀಕ್ಷೆ',
+      desc: 'Dark Web Breach Monitor',
+      descKn: 'ಡಾರ್ಕ್ ವೆಬ್ ಡೇಟಾ ಸೋರಿಕೆ',
+      icon: ShieldOff,
+      accent: 'fuchsia',
+    },
+    {
+      id: 'community',
+      name: 'Community',
+      nameKn: 'ಸಮುದಾಯ',
+      desc: 'Crowdsourced Scam Reports',
+      descKn: 'ಸಮುದಾಯ ವಂಚನೆ ವರದಿ',
+      icon: Megaphone,
+      accent: 'orange',
+      badge: 'LIVE',
+    },
+    {
+      id: 'report',
+      name: 'File Report',
+      nameKn: 'ವರದಿ ಸಲ್ಲಿಸಿ',
+      desc: 'Incident Report & 1930 Filing',
+      descKn: 'ಘಟನೆ ವರದಿ & 1930 ದೂರು',
+      icon: FileWarning,
+      accent: 'red',
+    },
   ];
 
   return (
     <div className="border-b border-slate-800/80 bg-slate-950/90 px-4 py-3 sm:px-6 backdrop-blur-md">
       <div className="mx-auto max-w-7xl">
         <div className="flex items-center justify-between gap-4 overflow-x-auto pb-2 scrollbar-none sm:pb-0">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             {pillars.map((pillar) => {
               const Icon = pillar.icon;
               const isActive = activePillar === pillar.id;
@@ -124,17 +177,17 @@ export const CommandHubNavigator: React.FC<CommandHubNavigatorProps> = ({
                   key={pillar.id}
                   type="button"
                   onClick={() => onSelectPillar(pillar.id)}
-                  className={`group relative flex shrink-0 items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-left transition-all ${
+                  className={`group relative flex shrink-0 items-center gap-2.5 rounded-2xl px-4 py-2.5 text-left transition-all duration-200 cursor-pointer ${
                     isActive
-                      ? 'border border-cyan-500/50 bg-gradient-to-r from-cyan-950/80 to-slate-900 text-cyan-300 shadow-md shadow-cyan-500/10'
-                      : 'border border-slate-800/60 bg-slate-900/40 text-slate-400 hover:border-slate-700 hover:bg-slate-900/80 hover:text-slate-200'
+                      ? 'border border-cyan-400/60 bg-gradient-to-r from-cyan-950/90 via-slate-900 to-slate-950 text-cyan-200 shadow-lg shadow-cyan-500/15 ring-1 ring-cyan-400/20'
+                      : 'border border-slate-800/80 bg-slate-900/50 text-slate-400 hover:border-slate-700 hover:bg-slate-900/90 hover:text-slate-200 hover:shadow-md'
                   }`}
                 >
                   <div
-                    className={`flex h-8 w-8 items-center justify-center rounded-lg transition-all ${
+                    className={`flex h-8 w-8 items-center justify-center rounded-xl transition-all duration-200 ${
                       isActive
-                        ? 'bg-cyan-500/20 text-cyan-400 shadow-sm shadow-cyan-500/30'
-                        : 'bg-slate-800/80 text-slate-400 group-hover:text-slate-200'
+                        ? 'bg-cyan-500/25 text-cyan-300 shadow-sm shadow-cyan-500/40 ring-1 ring-cyan-400/30'
+                        : 'bg-slate-800/90 text-slate-400 group-hover:text-slate-200 group-hover:bg-slate-800'
                     }`}
                   >
                     <Icon className="h-4 w-4" />
@@ -143,7 +196,7 @@ export const CommandHubNavigator: React.FC<CommandHubNavigatorProps> = ({
                   <div className="flex flex-col">
                     <div className="flex items-center gap-1.5">
                       <span
-                        className={`text-xs font-bold ${
+                        className={`text-xs font-bold tracking-tight ${
                           isActive ? 'text-cyan-300' : 'text-slate-200'
                         }`}
                       >
@@ -151,17 +204,17 @@ export const CommandHubNavigator: React.FC<CommandHubNavigatorProps> = ({
                       </span>
                       {pillar.badge && (
                         <span
-                          className={`rounded px-1 py-0.2 text-[9px] font-mono font-extrabold ${
+                          className={`rounded-md px-1.5 py-0.5 text-[9px] font-mono font-extrabold ${
                             pillar.accent === 'red'
                               ? 'bg-red-500/20 text-red-400 border border-red-500/30 animate-pulse'
-                              : 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
+                              : 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
                           }`}
                         >
                           {pillar.badge}
                         </span>
                       )}
                     </div>
-                    <span className="hidden text-[10px] text-slate-500 md:block">
+                    <span className="hidden text-[10px] font-medium text-slate-400 md:block">
                       {language === 'kn' ? pillar.descKn : pillar.desc}
                     </span>
                   </div>

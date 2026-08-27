@@ -35,8 +35,12 @@ export type ActivePillar =
   | 'honeypot'
   | 'apk'
   | 'golden-hour'
+  | 'cen-stations'
   | 'intelligence'
   | 'education'
+  | 'cyber-health'
+  | 'breach-check'
+  | 'community'
   | 'report';
 
 /* ─── IOC (Indicator of Compromise) ─────────────────────── */
@@ -141,11 +145,47 @@ export interface IncidentReport {
 
 /* ─── Karnataka CEN Station ─────────────────────────────── */
 export interface CENStation {
+  id?: string;
   district: string;
+  districtKn?: string;
   stationName: string;
+  stationNameKn?: string;
   address: string;
+  addressKn?: string;
   phone: string;
+  emergencyDirect?: string;
   email: string;
+  officerInCharge?: string;
+  jurisdiction?: string;
+  jurisdictionKn?: string;
+  latitude?: number;
+  longitude?: number;
+}
+
+/* ─── OCR Screenshot Scan ───────────────────────────────── */
+export interface OcrBoundingBox {
+  text: string;
+  category: 'URGENCY' | 'URL' | 'PHONE' | 'UPI' | 'MALWARE_APK' | 'BANK_IMPERSONATION';
+  confidence: number;
+  box: [number, number, number, number]; // [ymin, xmin, ymax, xmax]
+}
+
+export interface OcrScanResult {
+  extracted_text: string;
+  language: string;
+  script: string;
+  threat_level: ThreatLevel;
+  overall_score: number;
+  scam_archetype: ScamArchetype;
+  coercion_triggers: CoercionTrigger[];
+  entities: {
+    urls: string[];
+    phones: string[];
+    upiIds: string[];
+  };
+  bounding_boxes: OcrBoundingBox[];
+  recommendation: string;
+  recommendation_kn: string;
 }
 
 /* ─── Scam DNA Node ─────────────────────────────────────── */
@@ -333,3 +373,51 @@ export interface ScamTimelineStage {
   counterActionKn: string;
   isInterventionPoint: boolean;
 }
+
+/* ─── Dark Web Leak Check ───────────────────────────────── */
+export interface BreachRecord {
+  breachName: string;
+  breachDate: string;
+  dataExposed: string[];
+  severity: ThreatLevel;
+  recordCount: number;
+  description: string;
+  descriptionKn: string;
+}
+
+/* ─── Community Scam Alert ──────────────────────────────── */
+export interface CommunityAlert {
+  id: string;
+  reporterDistrict: string;
+  scamType: ScamArchetype;
+  title: string;
+  titleKn: string;
+  description: string;
+  descriptionKn: string;
+  timestamp: string;
+  upvotes: number;
+  verified: boolean;
+  iocSnippet?: string;
+}
+
+/* ─── QR Threat Scan Result ─────────────────────────────── */
+export interface QRScanResult {
+  decodedUrl: string;
+  domain: string;
+  isShortened: boolean;
+  redirectChain: string[];
+  threatLevel: ThreatLevel;
+  riskScore: number;
+  flags: string[];
+  verdict: string;
+  verdictKn: string;
+}
+
+/* ─── Scam Statistics ───────────────────────────────────── */
+export interface ScamStatEntry {
+  label: string;
+  labelKn: string;
+  value: number;
+  color: string;
+}
+
