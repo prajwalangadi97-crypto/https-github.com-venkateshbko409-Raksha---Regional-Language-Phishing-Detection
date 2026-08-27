@@ -60,6 +60,14 @@ ARCHETYPE_EXPLANATIONS: dict[str, dict[str, str]] = {
         "en": "This is a Ponzi/investment scam. No legitimate investment guarantees fixed daily returns. You will lose all invested money.",
         "kn": "ಇದು ಪೋಂಜಿ/ಹೂಡಿಕೆ ವಂಚನೆ. ಯಾವ ಕಾನೂನುಬದ್ಧ ಹೂಡಿಕೆಯೂ ಸ್ಥಿರ ದೈನಂದಿನ ಆದಾಯವನ್ನು ಖಾತ್ರಿಪಡಿಸುವುದಿಲ್ಲ.",
     },
+    "CRYPTO_PONZI": {
+        "en": "This is a cryptocurrency Ponzi scheme. No trading bot guarantees profits. Crypto investments carry high risk and no platform can guarantee returns. Your deposited funds will be stolen.",
+        "kn": "ಇದು ಕ್ರಿಪ್ಟೋಕರೆನ್ಸಿ ಪೋಂಜಿ ಯೋಜನೆ. ಯಾವ ಟ್ರೇಡಿಂಗ್ ಬಾಟ್ ಲಾಭವನ್ನು ಖಾತ್ರಿಪಡಿಸುವುದಿಲ್ಲ. ನಿಮ್ಮ ಠೇವಣಿ ಹಣವನ್ನು ಕದಿಯಲಾಗುವುದು.",
+    },
+    "MATRIMONY_SCAM": {
+        "en": "This is a matrimony/romance scam. Scammers create fake profiles to build emotional trust and then demand money for travel, visa, or emergency expenses. Never send money to someone you have not met in person.",
+        "kn": "ಇದು ವೈವಾಹಿಕ/ರೊಮ್ಯಾನ್ಸ್ ವಂಚನೆ. ವಂಚಕರು ಭಾವನಾತ್ಮಕ ನಂಬಿಕೆ ಬೆಳೆಸಲು ನಕಲಿ ಪ್ರೊಫೈಲ್ ರಚಿಸಿ ನಂತರ ಹಣ ಕೇಳುತ್ತಾರೆ. ನೇರವಾಗಿ ಭೇಟಿಯಾಗದ ವ್ಯಕ್ತಿಗೆ ಹಣ ಕಳುಹಿಸಬೇಡಿ.",
+    },
     "LEGITIMATE": {
         "en": "This message appears to be legitimate. No scam indicators detected.",
         "kn": "ಈ ಸಂದೇಶವು ಕಾನೂನುಬದ್ಧವಾಗಿ ಕಾಣುತ್ತದೆ. ಯಾವುದೇ ವಂಚನೆ ಸೂಚಕಗಳು ಪತ್ತೆಯಾಗಿಲ್ಲ.",

@@ -30,15 +30,15 @@ export const CommandQuickDock: React.FC<CommandQuickDockProps> = ({
   onToggleSeniorMode: _onToggleSeniorMode,
 }) => {
   return (
-    <div className="fixed bottom-4 left-1/2 z-40 -translate-x-1/2">
-      <div className="flex items-center gap-1.5 rounded-2xl border border-slate-700/80 bg-slate-950/85 p-1.5 shadow-2xl shadow-cyan-950/40 backdrop-blur-xl ring-1 ring-white/10">
+    <div className="fixed bottom-4 left-1/2 z-40 -translate-x-1/2 max-w-[95vw]">
+      <div className="flex items-center gap-1.5 rounded-full border border-white/[0.12] bg-[#0c101a]/85 p-1.5 shadow-2xl shadow-black/90 backdrop-blur-3xl ring-1 ring-white/10">
         <button
           type="button"
           onClick={() => onSelectPillar('phishing')}
-          className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold transition-all ${
+          className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-bold font-heading transition-all duration-200 cursor-pointer ${
             activePillar === 'phishing'
-              ? 'bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/30'
-              : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
+              ? 'bg-white text-slate-950 shadow-md shadow-white/20'
+              : 'text-slate-300 hover:bg-white/[0.08] hover:text-white'
           }`}
           title="Analyze SMS & URLs"
         >
@@ -49,10 +49,10 @@ export const CommandQuickDock: React.FC<CommandQuickDockProps> = ({
         <button
           type="button"
           onClick={() => onSelectPillar('voice')}
-          className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold transition-all ${
+          className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-bold font-heading transition-all duration-200 cursor-pointer ${
             activePillar === 'voice'
-              ? 'bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/30'
-              : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
+              ? 'bg-white text-slate-950 shadow-md shadow-white/20'
+              : 'text-slate-300 hover:bg-white/[0.08] hover:text-white'
           }`}
           title="Voice Deepfake Guard"
         >
@@ -63,10 +63,10 @@ export const CommandQuickDock: React.FC<CommandQuickDockProps> = ({
         <button
           type="button"
           onClick={() => onSelectPillar('honeypot')}
-          className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold transition-all ${
+          className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-bold font-heading transition-all duration-200 cursor-pointer ${
             activePillar === 'honeypot'
-              ? 'bg-purple-500 text-slate-950 shadow-md shadow-purple-500/30'
-              : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
+              ? 'bg-purple-400 text-slate-950 shadow-md shadow-purple-400/20'
+              : 'text-slate-300 hover:bg-white/[0.08] hover:text-white'
           }`}
           title="AI Honeypot Trap"
         >
@@ -77,24 +77,24 @@ export const CommandQuickDock: React.FC<CommandQuickDockProps> = ({
         <button
           type="button"
           onClick={() => onSelectPillar('golden-hour')}
-          className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold transition-all ${
+          className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold font-heading transition-all duration-200 cursor-pointer ${
             activePillar === 'golden-hour'
-              ? 'bg-red-600 text-white shadow-md shadow-red-600/40 animate-pulse'
-              : 'bg-red-950/40 text-red-300 hover:bg-red-900/60 hover:text-white'
+              ? 'bg-gradient-to-r from-rose-600 to-pink-600 text-white shadow-lg shadow-rose-600/30 ring-1 ring-white/20'
+              : 'bg-rose-500/15 text-rose-300 border border-rose-500/30 hover:bg-rose-500/25 hover:text-white'
           }`}
           title="1930 Golden Hour Emergency Freeze"
         >
-          <Flame className="h-4 w-4" />
+          <Flame className="h-4 w-4 text-rose-400 animate-pulse" />
           <span>1930 {language === 'kn' ? 'ಫ್ರೀಜ್' : 'Freeze'}</span>
         </button>
 
         <button
           type="button"
           onClick={() => onSelectPillar('cen-stations')}
-          className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold transition-all ${
+          className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-bold font-heading transition-all duration-200 cursor-pointer ${
             activePillar === 'cen-stations'
-              ? 'bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/30'
-              : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
+              ? 'bg-white text-slate-950 shadow-md shadow-white/20'
+              : 'text-slate-300 hover:bg-white/[0.08] hover:text-white'
           }`}
           title="Karnataka CEN Police Stations & FIR"
         >
@@ -105,10 +105,10 @@ export const CommandQuickDock: React.FC<CommandQuickDockProps> = ({
         <button
           type="button"
           onClick={() => onSelectPillar('intelligence')}
-          className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold transition-all ${
+          className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-bold font-heading transition-all duration-200 cursor-pointer ${
             activePillar === 'intelligence'
-              ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/30'
-              : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
+              ? 'bg-amber-400 text-slate-950 shadow-md shadow-amber-400/20'
+              : 'text-slate-300 hover:bg-white/[0.08] hover:text-white'
           }`}
           title="Scam DNA & Radar"
         >
@@ -119,10 +119,10 @@ export const CommandQuickDock: React.FC<CommandQuickDockProps> = ({
         <button
           type="button"
           onClick={() => onSelectPillar('education')}
-          className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold transition-all ${
+          className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-bold font-heading transition-all duration-200 cursor-pointer ${
             activePillar === 'education'
-              ? 'bg-sky-500 text-slate-950 shadow-md shadow-sky-500/30'
-              : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
+              ? 'bg-sky-400 text-slate-950 shadow-md shadow-sky-400/20'
+              : 'text-slate-300 hover:bg-white/[0.08] hover:text-white'
           }`}
           title="Cyber Tutor & Lab"
         >
@@ -133,10 +133,10 @@ export const CommandQuickDock: React.FC<CommandQuickDockProps> = ({
         <button
           type="button"
           onClick={() => onSelectPillar('report')}
-          className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold transition-all ${
+          className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-bold font-heading transition-all duration-200 cursor-pointer ${
             activePillar === 'report'
-              ? 'bg-red-600 text-white shadow-md shadow-red-600/40'
-              : 'bg-red-950/40 text-red-300 hover:bg-red-900/60 hover:text-white'
+              ? 'bg-rose-500 text-white shadow-md shadow-rose-500/25'
+              : 'bg-rose-500/10 text-rose-300 hover:bg-rose-500/20 hover:text-white'
           }`}
           title="File Incident Report"
         >
@@ -147,10 +147,10 @@ export const CommandQuickDock: React.FC<CommandQuickDockProps> = ({
         <button
           type="button"
           onClick={() => onSelectPillar('cyber-health')}
-          className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold transition-all ${
+          className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-bold font-heading transition-all duration-200 cursor-pointer ${
             activePillar === 'cyber-health'
-              ? 'bg-rose-500 text-slate-950 shadow-md shadow-rose-500/30'
-              : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
+              ? 'bg-pink-400 text-slate-950 shadow-md shadow-pink-400/20'
+              : 'text-slate-300 hover:bg-white/[0.08] hover:text-white'
           }`}
           title="Cyber Health Score"
         >
@@ -158,18 +158,20 @@ export const CommandQuickDock: React.FC<CommandQuickDockProps> = ({
           <span className="hidden md:inline">{language === 'kn' ? 'ಆರೋಗ್ಯ' : 'Health'}</span>
         </button>
 
-        <div className="h-5 w-px bg-slate-800" />
+        <div className="h-5 w-px bg-white/10" />
 
         <button
           type="button"
           onClick={onOpenCopilot}
-          className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-cyan-600 to-teal-600 px-3.5 py-2 text-xs font-bold text-white shadow-md shadow-cyan-600/30 transition-all hover:scale-105 active:scale-95"
+          className="flex items-center gap-1.5 rounded-full bg-sky-400 px-4 py-2 text-xs font-bold font-heading text-slate-950 shadow-md shadow-sky-400/20 transition-all duration-200 hover:scale-105 hover:bg-sky-300 active:scale-95 cursor-pointer"
           title="Open AI Cyber Copilot"
         >
-          <Bot className="h-4 w-4 animate-spin" />
+          <Bot className="h-4 w-4" />
           <span>Copilot</span>
         </button>
       </div>
     </div>
   );
 };
+
+export default CommandQuickDock;

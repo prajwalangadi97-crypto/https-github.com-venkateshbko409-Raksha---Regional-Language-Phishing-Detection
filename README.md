@@ -1,14 +1,15 @@
 # 🛡️ Omnikon — Raksha AI (ರಕ್ಷಾ AI)
 
-> **Autonomous Regional Language Phishing Detection, Acoustic Deepfake Voice Forensics & Rapid Counter-Intelligence Command for Karnataka & India**
+> **Autonomous Regional Language Phishing Detection, Acoustic Deepfake Voice Forensics & 1930 NCRP Rapid Counter-Intelligence Command for Karnataka & India**
 
 [![React](https://img.shields.io/badge/React-19.2-61dafb?style=for-the-badge&logo=react)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178c6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
-[![Vite](https://img.shields.io/badge/Vite-6.0+-646cff?style=for-the-badge&logo=vite)](https://vitejs.dev/)
+[![Vite](https://img.shields.io/badge/Vite-8.2+-646cff?style=for-the-badge&logo=vite)](https://vitejs.dev/)
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v4-38bdf8?style=for-the-badge&logo=tailwindcss)](https://tailwindcss.com/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
-[![Python](https://img.shields.io/badge/Python-3.10+-3776ab?style=for-the-badge&logo=python)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/Python-3.12+-3776ab?style=for-the-badge&logo=python)](https://www.python.org/)
 [![Scikit-Learn](https://img.shields.io/badge/scikit--learn-1.6+-f7931e?style=for-the-badge&logo=scikit-learn)](https://scikit-learn.org/)
+[![Design System](https://img.shields.io/badge/Design-Titanium%20%26%20Ice%20Blue-38bdf8?style=for-the-badge)](https://github.com/venkateshbko409/Raksha---Regional-Language-Phishing-Detection)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
 ---

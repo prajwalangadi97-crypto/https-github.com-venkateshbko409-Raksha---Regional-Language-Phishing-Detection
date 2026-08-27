@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Navbar } from './components/Navbar';
 import { HeroSection } from './components/HeroSection';
 import { CommandHubNavigator } from './components/CommandHubNavigator';
@@ -27,8 +27,11 @@ import { DarkWebLeakChecker } from './components/DarkWebLeakChecker';
 import { CommunityScamAlertWall } from './components/CommunityScamAlertWall';
 import { QRThreatScanner } from './components/QRThreatScanner';
 import { ScamStatisticsEngine } from './components/ScamStatisticsEngine';
-
 import { CenStationLocator } from './components/CenStationLocator';
+import { BootSplashScreen } from './components/BootSplashScreen';
+import { Footer } from './components/Footer';
+import { SystemStatusBar } from './components/SystemStatusBar';
+import { useToast } from './components/ToastNotifications';
 
 import type { Language, ActivePillar, TelemetryStats } from './types';
 import { initialTelemetry } from './data/karnatakaScamData';
@@ -41,13 +44,25 @@ export function App() {
   const [copilotOpen, setCopilotOpen] = useState<boolean>(false);
   const [presetPhishingText, setPresetPhishingText] = useState<string>('');
   const [telemetry, setTelemetry] = useState<TelemetryStats>(initialTelemetry);
+  const [showSplash, setShowSplash] = useState<boolean>(true);
+  const { addToast } = useToast();
 
   // Fetch live telemetry from backend API
   useEffect(() => {
     api.getTelemetry()
-      .then((data: any) => setTelemetry(data))
+      .then((data: any) => {
+        setTelemetry(data);
+      })
       .catch(() => { /* fallback to initialTelemetry */ });
   }, []);
+
+  // Fire welcome toast after splash completes
+  const handleSplashComplete = useCallback(() => {
+    setShowSplash(false);
+    setTimeout(() => {
+      addToast('shield', 'Systems Online', 'All threat detection modules active. ML pipeline loaded.', 4000);
+    }, 500);
+  }, [addToast]);
 
   const handleToggleLanguage = () => {
     setLanguage((prev) => (prev === 'en' ? 'kn' : 'en'));
@@ -63,11 +78,15 @@ export function App() {
   };
 
   return (
-    <div
-      className={`min-h-screen cyber-mesh-bg text-slate-100 selection:bg-cyan-500 selection:text-slate-950 ${
-        seniorMode ? 'senior-mode font-sans text-lg' : ''
-      }`}
-    >
+    <>
+      {/* Boot Splash Screen */}
+      {showSplash && <BootSplashScreen onComplete={handleSplashComplete} />}
+
+      <div
+        className={`min-h-screen cyber-mesh-bg text-slate-100 selection:bg-cyan-500 selection:text-slate-950 ${
+          seniorMode ? 'senior-mode font-sans text-lg' : ''
+        }`}
+      >
       {/* Top Navbar */}
       <Navbar
         language={language}
@@ -79,6 +98,9 @@ export function App() {
         onOpenCopilot={() => setCopilotOpen(true)}
         onOpenGoldenHour={() => setActivePillar('golden-hour')}
       />
+
+      {/* Live System Status Bar */}
+      <SystemStatusBar language={language} />
 
       {/* Senior Voice Mode Dedicated Overlay when enabled */}
       {seniorMode && (
@@ -248,7 +270,11 @@ export function App() {
         language={language}
         onNavigateTo={setActivePillar}
       />
-    </div>
+
+      {/* Production Footer */}
+      <Footer language={language} />
+      </div>
+    </>
   );
 }
 

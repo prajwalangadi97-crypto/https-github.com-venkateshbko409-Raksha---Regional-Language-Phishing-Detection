@@ -25,7 +25,7 @@ THREAT_LEVEL_THRESHOLDS = {
 }
 
 # ── Supported Languages ───────────────────────────────────────
-SUPPORTED_LANGUAGES = ["en", "kn", "hi", "code-mixed"]
+SUPPORTED_LANGUAGES = ["en", "kn", "hi", "te", "ta", "code-mixed"]
 
 # ── Scam Archetypes ───────────────────────────────────────────
 SCAM_ARCHETYPES = [
@@ -39,6 +39,8 @@ SCAM_ARCHETYPES = [
     "AADHAAR_LINK_FRAUD",
     "OTP_THEFT",
     "INVESTMENT_PONZI",
+    "CRYPTO_PONZI",
+    "MATRIMONY_SCAM",
     "LEGITIMATE",
     "UNKNOWN",
 ]
