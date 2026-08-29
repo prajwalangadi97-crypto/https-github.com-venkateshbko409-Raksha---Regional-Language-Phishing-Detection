@@ -9,8 +9,10 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
 [![Python](https://img.shields.io/badge/Python-3.12+-3776ab?style=for-the-badge&logo=python)](https://www.python.org/)
 [![Scikit-Learn](https://img.shields.io/badge/scikit--learn-1.6+-f7931e?style=for-the-badge&logo=scikit-learn)](https://scikit-learn.org/)
-[![Design System](https://img.shields.io/badge/Design-Titanium%20%26%20Ice%20Blue-38bdf8?style=for-the-badge)](https://github.com/venkateshbko409/Raksha---Regional-Language-Phishing-Detection)
+[![Deployment](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://omnikon-two.vercel.app)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+
+🚀 **Live Deployment**: [https://omnikon-two.vercel.app](https://omnikon-two.vercel.app)
 
 ---
 
